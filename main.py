@@ -1,3 +1,3 @@
 from database import Database
 
-db = Database("root", "")
+db = Database("", "")
