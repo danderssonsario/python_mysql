@@ -13,9 +13,9 @@ class Controller:
   quit = False
   
   
-  def __init__(self, console, bookStore):
+  def __init__(self, console, bookstore):
     self.console = console
-    self.bookStore = bookStore
+    self.bookstore = bookstore
     
   def run (self):
     try:
@@ -29,7 +29,6 @@ class Controller:
     match self.menu:
       case self.Menu.MAIN:
         self.action = self.console.main_menu("MAIN MENU", ["Member Login", "Member Registration", "Quit"])
-  
         
   def do_action(self):
     match self.action:
@@ -40,5 +39,5 @@ class Controller:
         
   def __register_member(self):
     memberData = self.console.get_member_data()
-    # self.BookStore.create_member(memberData)
+    self.bookstore.create_member(memberData)
     self.console.action_succeded("Member Registration")

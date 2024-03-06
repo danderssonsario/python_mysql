@@ -4,13 +4,24 @@ from enum import Enum
 class Console:
   class Action(Enum):
     QUIT = 1,
-    MEMBER_LOGIN = 1,
-    MEMBER_REGISTER = 1,
+    MEMBER_LOGIN = 2,
+    MEMBER_REGISTER = 3,
   
   def main_menu(self, title, options):
     self.__print_header(title)
     self.__print_options(options)
-    self.__prompt_for_action(len(options))
+    input = self.__prompt_for_input(len(options))
+
+    match input:
+      case "1":
+        return self.Action.MEMBER_LOGIN
+      case "2":
+        return self.Action.MEMBER_REGISTER
+      case "3":
+        return self.Action.QUIT
+      case _:
+        return None
+    
 
 
   def __print_header(self, title):
@@ -26,13 +37,14 @@ class Console:
     for i in range(len(options)):
         print(f"{i+1}. {options[i]}") 
 
-  def __prompt_for_action(self, maxOptions):
+  def __prompt_for_input(self, maxOptions):
     selectedOption = None
     while (selectedOption is None):
         choice = input("Enter choice:")
+            
         try:
             if int(choice) in [x for x in range(1,maxOptions+1)]:
-                selectedOption = int(choice)
+                selectedOption = choice
             else:
                 print("Invalid input: please select the available options.")    
         except Exception:
@@ -40,7 +52,7 @@ class Console:
             print("Invalid input: it should be a number")           
     return  selectedOption
   
-  def get_member_data():
+  def get_member_data(self):
     print()
     print("New Member Registration")
     
@@ -57,8 +69,13 @@ class Console:
     
     return MemberData(fname, lname, address, city, state, zip, phone, email, password)
   
+  def action_succeded(self, message):
+    print()
+    print(message + "has been done successfully!")
+    input("Enter any key to continue")
+  
 class MemberData:
-  def __init__(self, fname, lname, address, city, state, zip, phone, password):
+  def __init__(self, fname, lname, address, city, state, zip, phone, email, password):
     self.fname = fname
     self.lname = lname
     self.address = address
@@ -66,9 +83,5 @@ class MemberData:
     self.state = state
     self.zip = zip
     self.phone = phone
+    self.email = email
     self.password = password
-
-  def action_succeded(self, message):
-    print()
-    print(message + "has been done successfully!")
-    input("Enter any key to continue")

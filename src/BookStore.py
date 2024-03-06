@@ -11,4 +11,4 @@ class BookStore:
     self.database = Database(self.config["DB_HOST"], self.config["DB_USERNAME"], self.config["DB_PASSWORD"], self.config["DB_NAME"])
   
   def create_member(self, data):
-    pass  # database.insert(data)
+    self.database.insert("MEMBER", data)
