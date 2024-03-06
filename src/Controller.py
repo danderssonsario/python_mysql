@@ -1,5 +1,5 @@
 from enum import Enum
-from Console import Console
+from console import Console
 import traceback
 
 # Class responsible for mapping user input to the correct method.
@@ -24,7 +24,6 @@ class Controller:
         self.do_action()
     except:
       traceback.print_exc()
-      self.run()
       
   def display_menu(self):
     match self.menu:
