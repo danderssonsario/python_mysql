@@ -24,6 +24,7 @@ class Controller:
         self.do_action()
     except:
       traceback.print_exc()
+      self.run()
       
   def display_menu(self):
     match self.menu:
@@ -33,5 +34,12 @@ class Controller:
         
   def do_action(self):
     match self.action:
+      case Console.Action.MEMBER_REGISTER:
+        self.__register_member()
       case Console.Action.QUIT:
         self.quit = True
+        
+  def __register_member(self):
+    memberData = self.console.get_member_data()
+    # self.BookStore.create_member(memberData)
+    self.console.action_succeded("Member Registration")

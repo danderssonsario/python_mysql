@@ -39,3 +39,36 @@ class Console:
             selectedOption = None
             print("Invalid input: it should be a number")           
     return  selectedOption
+  
+  def get_member_data():
+    print()
+    print("New Member Registration")
+    
+    fname = input("First name: ")
+    lname = input("Last name: ")
+    address = input("Street address: ")
+    city = input("City: ")
+    state = input("State: ")
+    zip =input("Zip: ")
+    phone = input("Phone: ")
+    email = input("Email address: ")
+    print()
+    password = input("Enter a password: ")
+    
+    return MemberData(fname, lname, address, city, state, zip, phone, email, password)
+  
+class MemberData:
+  def __init__(self, fname, lname, address, city, state, zip, phone, password):
+    self.fname = fname
+    self.lname = lname
+    self.address = address
+    self.city = city
+    self.state = state
+    self.zip = zip
+    self.phone = phone
+    self.password = password
+
+  def action_succeded(self, message):
+    print()
+    print(message + "has been done successfully!")
+    input("Enter any key to continue")
