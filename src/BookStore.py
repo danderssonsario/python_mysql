@@ -17,7 +17,7 @@ class BookStore:
     return self.database.select_all("SELECT DISTINCT subject FROM books ORDER BY subject;")
   
   def authenticate_member(self, credentials):
-    user = self.database.select_one(f"""SELECT * from  members WHERE email = {credentials.email} AND password = {credentials.password}""")
+    user = self.database.select_one(f"""SELECT userid from  members WHERE email = {credentials.email} AND password = {credentials.password}""")
     if (user):
       return user
     else:
@@ -25,6 +25,12 @@ class BookStore:
     
   def get_books_by_subject(self, subject):
     return self.database.select_all(f"""SELECT * FROM books WHERE subject = {subject};""")
+  
+  def get_books_by_author(self, search):
+    return self.database.select_all(f"""SELECT * FROM books WHERE author LIKE '%{search}%'""")
+  
+  def get_books_by_title(self, search):
+    return self.database.select_all(f"""SELECT * FROM books WHERE title LIKE '%{search}%'""")
   
   def add_to_cart(self, data):
     self.database.insert("cart", data)

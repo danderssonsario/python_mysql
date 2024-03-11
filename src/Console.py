@@ -11,9 +11,12 @@ class Console:
     CHECKOUT = None,
     LOGOUT = None,
     BOOKS = None,
-    BACK = None,
     BROWSE_NEXT = None,
     ADD_TO_CART = None
+    BACK_SUBJECT = None,
+    BACK_MEMBER = None,
+    SEARCH_BY_AUTHOR = None,
+    SEARCH_BY_TITLE = None
     
   
   def main_menu(self, title, options):
@@ -69,6 +72,22 @@ class Console:
     print("Press ENTER to go back to menu")
     
     return input()
+  
+  
+  def search_menu(self, title, options):
+    self.__print_header(title)
+    self.__print_options(options)
+    input = self.__prompt_for_input(len(options))
+
+    match input:
+      case "1":
+        return self.Action.SEARCH_BY_AUTHOR
+      case "2":
+        return self.Action.SEARCH_BY_TITLE
+      case "3":
+        return self.Action.BACK_MEMBER
+      case _:
+        return None
 
   def __print_header(self, title):
     print()
@@ -129,6 +148,10 @@ class Console:
     print()
     print(message + "has been done successfully!")
     input("Enter any key to continue")
+    
+  def get_search_string():
+    print()
+    return input("Enter your search: ")
   
 class MemberData:
   def __init__(self, fname, lname, address, city, state, zip, phone, email, password):
