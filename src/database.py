@@ -12,14 +12,18 @@ class Database:
       
   def insert (self, table, data):
     try:
-      # TODO: FIX THE QUERY
-       insert_query = f""" INSERT INTO {table} ({', '.join(data.keys())}) VALUES("{data.fname}","{data.lname}","{data.address}","{data.city}","{data.state}","{data.zip}","{data.phone}","{data.email}","{data.password}","{data.fname}","{data.lname}","{data.address}","{data.city}","{data.state}","{data.zip}","{data.phone}","{data.email}","{data.password}");   """
-       self.__execute_with_commit(insert_query)
-       print("Adding new  employee was succsessful!")
+       query = f""" INSERT INTO {table} ({', '.join(data.keys())}) VALUES("{data.fname}","{data.lname}","{data.address}","{data.city}","{data.state}","{data.zip}","{data.phone}","{data.email}","{data.password}","{data.fname}","{data.lname}","{data.address}","{data.city}","{data.state}","{data.zip}","{data.phone}","{data.email}","{data.password}");   """
+       self.__execute_with_commit(query)
     except Exception as e:
-        print("ADDING employee operation is FAILD!")
         print(e)
-        
+   
+  def select_all (self, query):
+    return self.__execute_with_fetchall(query)
+  
+  def select_one (self, query):
+    return self.__execute_with_fetchone(query)
+    
+     
   #get cursor
   def __get_cursor__(self):
     return self.connection.cursor()
@@ -29,6 +33,12 @@ class Database:
     with self.__get_cursor__() as cursor:
       cursor.execute(query)
       return cursor.fetchall()
+    
+    #execute and fetch all reaults
+  def __execute_with_fetchone(self,query):
+    with self.__get_cursor__() as cursor:
+      cursor.execute(query)
+      return cursor.fetchone()
        
   #execute with commit
   def __execute_with_commit(self,query):

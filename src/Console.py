@@ -3,9 +3,14 @@ from enum import Enum
 # Class responsible for serving menu and prompting user for input.
 class Console:
   class Action(Enum):
-    QUIT = 1,
-    MEMBER_LOGIN = 2,
-    MEMBER_REGISTER = 3,
+    QUIT = None,
+    MEMBER_LOGIN = None,
+    MEMBER_REGISTER = None,
+    BROWSE = None,
+    SEARCH = None,
+    CHECKOUT = None,
+    LOGOUT = None,
+    BOOKS = None
   
   def main_menu(self, title, options):
     self.__print_header(title)
@@ -21,13 +26,36 @@ class Console:
         return self.Action.QUIT
       case _:
         return None
-    
+
+  def member_menu(self, title, options):
+    self.__print_header(title)
+    self.__print_options(options)
+    input = self.__prompt_for_input(len(options))
+
+    match input:
+      case "1":
+        return self.Action.BROWSE
+      case "2":
+        return self.Action.SEARCH
+      case "3":
+        return self.Action.CHECKOUT
+      case "4":
+        return self.Action.LOGOUT
+      case _:
+        return None
+
+  def subjects_menu(self, title, options):
+    self.__print_header(title)
+    self.__print_options(options)
+    input = self.__prompt_for_input(len(options))
+
+    return input
 
 
   def __print_header(self, title):
     print()
     print("***********************************************************")
-    print("***                                                     ***")
+    print("***               Online Book Store                     ***")
     print("***                 " + title + "                       ***")
     print("***                                                     ***")   
     print("***********************************************************") 
@@ -61,13 +89,23 @@ class Console:
     address = input("Street address: ")
     city = input("City: ")
     state = input("State: ")
-    zip =input("Zip: ")
+    zip = input("Zip: ")
     phone = input("Phone: ")
     email = input("Email address: ")
     print()
     password = input("Enter a password: ")
     
     return MemberData(fname, lname, address, city, state, zip, phone, email, password)
+  
+  # Login form
+  def get_member_credentials(self):
+    print()
+    print("Member login")
+    
+    email = input("Email: ")
+    password = input("Password: ")
+    
+    return MemberCredentials(email, password)
   
   def action_succeded(self, message):
     print()
@@ -84,4 +122,9 @@ class MemberData:
     self.zip = zip
     self.phone = phone
     self.email = email
+    self.password = password
+
+class MemberCredentials:
+  def __init__(self, username, password):
+    self.username = username
     self.password = password
