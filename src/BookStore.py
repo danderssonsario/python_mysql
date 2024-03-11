@@ -19,9 +19,12 @@ class BookStore:
   def authenticate_member(self, credentials):
     user = self.database.select_one(f"""SELECT * from  members WHERE email = {credentials.email} AND password = {credentials.password}""")
     if (user):
-      return
+      return user
     else:
       raise PermissionError()
     
   def get_books_by_subject(self, subject):
     return self.database.select_all(f"""SELECT * FROM books WHERE subject = {subject};""")
+  
+  def add_to_cart(self, data):
+    self.database.insert("cart", data)

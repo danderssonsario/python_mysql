@@ -10,7 +10,11 @@ class Console:
     SEARCH = None,
     CHECKOUT = None,
     LOGOUT = None,
-    BOOKS = None
+    BOOKS = None,
+    BACK = None,
+    BROWSE_NEXT = None,
+    ADD_TO_CART = None
+    
   
   def main_menu(self, title, options):
     self.__print_header(title)
@@ -47,10 +51,24 @@ class Console:
   def subjects_menu(self, title, options):
     self.__print_header(title)
     self.__print_options(options)
-    input = self.__prompt_for_input(len(options))
+    return self.__prompt_for_input(len(options))
 
-    return input
+  def books_menu(self, title, books):
+    self.__print_header(title)
+    print(f"""{len(books)} books available on this subject""")
+    for book in books:
+      print (f"""Author: {book.author}""")
+      print (f"""Title: {book.title}""")
+      print (f"""ISBN: {book.isbn}""")
+      print (f"""Price: {book.price}""")
+      print (f"""Subject: {book.subject}""")
 
+
+    print("Enter ISBN too add to Cart ")
+    print("Press n + ENTER to continue browsing")
+    print("Press ENTER to go back to menu")
+    
+    return input()
 
   def __print_header(self, title):
     print()
@@ -128,3 +146,4 @@ class MemberCredentials:
   def __init__(self, username, password):
     self.username = username
     self.password = password
+    

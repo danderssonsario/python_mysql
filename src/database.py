@@ -12,7 +12,7 @@ class Database:
       
   def insert (self, table, data):
     try:
-       query = f""" INSERT INTO {table} ({', '.join(data.keys())}) VALUES("{data.fname}","{data.lname}","{data.address}","{data.city}","{data.state}","{data.zip}","{data.phone}","{data.email}","{data.password}","{data.fname}","{data.lname}","{data.address}","{data.city}","{data.state}","{data.zip}","{data.phone}","{data.email}","{data.password}");   """
+       query = f""" INSERT INTO {table} ({', '.join(data.keys())}) VALUES({', '.join(data.values())})"""
        self.__execute_with_commit(query)
     except Exception as e:
         print(e)
