@@ -3,9 +3,6 @@ from bookstore import BookStore
 from console import Console
 from controller import Controller
 
-# db = Database("", "")
-
-
 def main():
     
     view = Console()

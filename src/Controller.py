@@ -10,18 +10,37 @@ class Controller:
     MEMBER = None,
     BOOK_MENU = None,
     SUBJECTS = None,
-    SEARCH = None
+    SEARCH = None,
+    CHECKOUT = None
+    
+  class Action(Enum):
+    QUIT = None,
+    MEMBER_LOGIN = None,
+    MEMBER_REGISTER = None,
+    BROWSE = None,
+    SEARCH = None,
+    CHECKOUT = None,
+    LOGOUT = None,
+    BOOKS = None,
+    BROWSE_NEXT = None,
+    ADD_TO_CART = None
+    BACK_SUBJECT = None,
+    BACK_MEMBER = None,
+    SEARCH_BY_AUTHOR = None,
+    SEARCH_BY_TITLE = None
+    
   
-  menu = Menu.MAIN
-  action = Console.Action
+  menu = "MAIN"
+  action = None
   input = None
   quit = False
   subjects = None
   books = None
   book_index = 0
-  no_of_books = 0
+  no_of_books_to_display = 0
   user = None
-  
+  checkout_data = None
+  order = None
   
   def __init__(self, console, bookstore):
     self.console = console
@@ -31,74 +50,89 @@ class Controller:
     try:
       while not self.quit:
         self.display_menu()
-        self.do_action()
     except:
       traceback.print_exc()
+      # self.run()
       
   def display_menu(self):
-    match self.menu:
-      case self.Menu.MAIN:
-        self.action = self.console.main_menu("MAIN MENU", ["Member Login", "Member Registration", "Quit"])
-      case self.Menu.MEMBER:
-        self.action = self.console.member_menu("MEMBER MENU", ["Browse by Subject", "Search by Author/Title", "Checkout", "Logout"])
-      case self.Menu.BOOK_MENU:
-        self.input = self.console.books_menu("BOOKS MENU", len(self.books), self.books[self.book_index: self.book_index + self.no_of_books])        
-        match self.input:
-          case "":
-            self.action = Console.Action.BACK
-          case "n":
-            self.action = Console.Action.BROWSE_NEXT
-          case _:
-            self.action = Console.Action.ADD_TO_CART
+    if self.menu == "MAIN":
+        self.input = self.console.main_menu("MAIN MENU", ["Member Login", "Member Registration", "Quit"])
         
-      case self.Menu.SUBJECTS:
-        self.input = self.console.subjects_menu("SUBJECTS MENU", self.subjects)
-        self.action = Console.Action.BOOKS
-      case self.Menu.SEARCH:
-        self.action = self.console.search_menu("SEARCH MENU", ["Author Search", "Title Search", "Go Back To Main Menu"])
-      case _:
+        if self.input == "1":
+            self.__login_member()
+            self.menu = "MEMBER"
+        elif self.input == "2":
+            self.__register_member()
+        elif self.input == "3":
+            self.__quit_app()
+        else:
+            return None
+      
+    elif self.menu == "MEMBER":
+        self.input = self.console.member_menu("MEMBER MENU", ["Browse by Subject", "Search by Author/Title", "Checkout", "Logout"])
+          
+        if self.input == "1":
+            self.__browse_by_subject()
+            self.menu = "SUBJECTS"
+        elif self.input == "2":
+            self.menu = "SEARCH"
+        elif self.input == "3":
+            self.__checkout()
+        elif self.input == "4":
+            self.user = None
+            self.menu = "MAIN"
+        else:
+            return None       
+
+    elif self.menu == "SUBJECTS":
+        self.input = self.console.subjects_menu(self.subjects)
+        self.books = self.bookstore.get_books_by_subject(self.subjects[int(self.input) - 1])
+        self.no_of_books_to_display = 2
+        self.menu = "BOOK_MENU"
+        
+    elif self.menu == "SEARCH":
+        self.input = self.console.search_menu("SEARCH MENU", ["Author Search", "Title Search", "Go Back To Main Menu"])
+        
+        if self.input == "1":
+            self.__search_by_author()
+            self.no_of_books_to_display = 3
+            self.menu = "BOOK_MENU"
+        elif self.input == "2":
+            self.__search_by_title()
+            self.no_of_books_to_display = 3
+            self.menu = "BOOK_MENU" 
+        elif self.input == "3":
+            self.menu = "MEMBER"
+        else:
+            return None
+          
+    elif self.menu == "BOOK_MENU":
+        self.input = self.console.books_menu(len(self.books), self.books[self.book_index: self.book_index + self.no_of_books_to_display])
+        
+        if self.input == "":
+            self.menu = "MEMBER"
+            self.book_index = 0
+        elif self.input == "n":
+            self.book_index = self.book_index + self.no_of_books_to_display
+        else:
+            self.__add_to_cart()
+            
+    elif self.menu == "CHECKOUT":
+        self.input = self.console.checkout_menu(self.checkout_data)
+        
+        if self.input.upper() == "Y":
+          self.__proceed_checkout()
+          self.menu = "ORDER"
+        elif self.input.upper() == "N":
+          self.menu = "MEMBER"
+        else:
+            return None
+          
+    elif self.menu == "ORDER":
+      self.console.order_menu(self.order, self.checkout_data)
+    else:
         pass
-        
-  def do_action(self):
-    match self.action:
-      # Main Menu Actions
-      case Console.Action.MEMBER_LOGIN:
-        self.__login_member()
-        self.menu = self.Menu.MEMBER
-      case Console.Action.MEMBER_REGISTER:
-        self.__register_member()
-      case Console.Action.QUIT:
-        self.__quit_app()
-        self.quit = True
-      # Member Menu Actions
-      case Console.Action.BROWSE:
-        self.__browse_by_subject()
-        self.menu = self.Menu.SUBJECTS
-      case Console.Action.SEARCH: 
-        self.menu = self.Menu.SEARCH 
-      # Browse by Subject actions
-      case Console.Action.BOOKS:
-        self.__display_book_details()
-        self.no_of_books = 2
-        self.menu = self.Menu.BOOK_MENU
-      case Console.Action.BACK_SUBJECT:
-        self.menu = self.Menu.SUBJECTS
-      case Console.Action.BROWSE_NEXT:
-        self.bookIndex = self.bookIndex + 1
-      case Console.Action.ADD_TO_CART:
-        self.__add_to_cart()
-      case Console.Action.SEARCH_BY_AUTHOR:
-        self.__search_by_author()
-        self.no_of_books = 3
-        self.menu = self.Menu.BOOK_MENU
-      case Console.Action.SEARCH_BY_TITLE:
-        self.__search_by_title()
-        self.no_of_books = 3
-        self.menu = self.Menu.BOOK_MENU
-      case Console.Action.BACK_MAIN:
-        self.menu = self.Menu.MEMBER
-      case _:
-        return None
+
         
   def __register_member(self):
     data = self.console.get_member_data()
@@ -110,7 +144,7 @@ class Controller:
     try:
       self.user = self.bookstore.authenticate_member(credentials)
     except PermissionError:
-      pass
+      print("Wrong credentials")
 
   def __browse_by_subject(self):
     self.subjects = self.bookstore.get_subjects()
@@ -119,8 +153,8 @@ class Controller:
     self.books = self.bookstore.get_books_by_subject(self.subjects[self.input - 1])
   
   def __add_to_cart(self):
-    qty = self.console.prompt_for_quantity()
-    self.bookstore.__add_to_cart(CartData(qty, self.input, self.user.userid))
+    qty = self.console.get_quantity()
+    self.bookstore.add_to_cart(CartData(qty, self.input, self.user))
   
   def __search_by_author(self):
     search_string = self.console.get_search_string()
@@ -130,7 +164,15 @@ class Controller:
     search_string = self.console.get_search_string()
     self.books = self.bookstore.get_books_by_title(search_string)
     
+  def __checkout(self):
+    self.checkout_data = self.bookstore.get_checkout_data(self.user)
+    self.menu = "CHECKOUT"
     
+  def __proceed_checkout(self):
+    self.bookstore.create_order(self.checkout_data, self.user)
+    self.order = self.bookstore.get_order_data(self.user)
+    self.menu = "ORDER"
+      
   def __quit_app(self):
     self.quit = True
     
@@ -139,4 +181,4 @@ class CartData:
     self.qty = qty
     self.isbn = isbn
     self.userid = userid
- 
+    

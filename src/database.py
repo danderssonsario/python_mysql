@@ -12,10 +12,15 @@ class Database:
       
   def insert (self, table, data):
     try:
-       query = f""" INSERT INTO {table} ({', '.join(data.keys())}) VALUES({', '.join(data.values())})"""
-       self.__execute_with_commit(query)
+      # Create a dictionary of attribute names and values
+      attributes = {attr: getattr(data, attr) for attr in dir(data) if not attr.startswith('__') and not callable(getattr(data, attr))}
+      # Format the values for SQL query
+      values = ', '.join([f"'{value}'" if isinstance(value, str) else str(value) for value in attributes.values()])
+      # Construct the query
+      query = f"INSERT INTO {table} ({', '.join(attributes.keys())}) VALUES ({values})"
+      self.__execute_with_commit(query)
     except Exception as e:
-        print(e)
+      print(e)
    
   def select_all (self, query):
     return self.__execute_with_fetchall(query)
@@ -38,7 +43,10 @@ class Database:
   def __execute_with_fetchone(self,query):
     with self.__get_cursor__() as cursor:
       cursor.execute(query)
-      return cursor.fetchone()
+      result = cursor.fetchone()  # Fetch one row
+      for _ in cursor:  # Consume or discard remaining rows
+        pass
+    return result
        
   #execute with commit
   def __execute_with_commit(self,query):
